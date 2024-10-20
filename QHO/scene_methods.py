@@ -1,7 +1,8 @@
-from typing import Optional
+import math
+from typing import Optional, List
 
 import numpy as np
-from manim import NumberPlane, ThreeDAxes, FunctionGraph, GRAY, UP, ThreeDScene, RIGHT, LEFT, DOWN
+from manim import NumberPlane, ThreeDAxes, FunctionGraph, GRAY, UP, ThreeDScene, RIGHT, LEFT, DOWN, Line, YELLOW, VGroup
 from manim import RED, GREEN, BLUE
 from manim import DEGREES
 
@@ -72,3 +73,39 @@ def prepare_potential_graph(origin_point: Optional[np.ndarray] = None) -> Functi
         _potential_graph.shift(UP * 0.5 * (_top - _bottom))
 
     return _potential_graph
+
+
+def wavefunction(n, _x, _t):
+    # Hermite polynomial (using scipy for convenience)
+    # n - which energy state
+    # x - coordinate
+    # t - time evolution
+    from scipy.special import hermite
+
+    norm = (1 / (np.pi ** (1 / 4) *
+                 np.sqrt(2 ** n *
+                         math.factorial(n))))
+    psi = (norm *
+           hermite(_x) *
+           np.exp(-_x ** 2 / 2) *
+           np.exp(-1j * (n + 0.5) * _t))
+    return psi
+
+
+energy_levels = [0.5 + n for n in range(3)]  # First 3 energy levels
+
+# 03.3 Create energy level indicators
+def prepare_energy_levels(origin_point: np.array) -> List[Line]:
+    _energy_level_lines = []
+    for e_l in energy_levels:
+        line = Line(
+            start=np.array([-3-origin_point[0], e_l+origin_point[1], 0]),
+            end=np.array([3-origin_point[0], e_l+origin_point[1], 0]),
+            color=YELLOW
+        )
+        _energy_level_lines.append(line)
+    # if origin_point is not None:
+    #     _energy_line_group.move_to(origin_point)
+    #     _top, _bottom = _energy_line_group.get_top(), _energy_line_group.get_bottom()
+    #     _energy_line_group.shift(UP * 0.5 * (_top - _bottom))
+    return _energy_level_lines

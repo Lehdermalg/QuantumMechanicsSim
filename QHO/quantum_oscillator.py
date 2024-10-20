@@ -5,7 +5,8 @@ from manim import ThreeDAxes, Axes, Dot
 from manim import WHITE, YELLOW, RED, GREEN, BLUE, GRAY
 from manim import UP, DOWN, DEGREES
 
-from scene_methods import prepare_grid, prepare_axes, prepare_camera, prepare_potential_graph
+from scene_methods import (prepare_grid, prepare_axes, prepare_camera, prepare_potential_graph,
+                           energy_levels, prepare_energy_levels)
 
 class QuantumHarmonicOscillator(ThreeDScene):
     def construct(self):
@@ -22,36 +23,10 @@ class QuantumHarmonicOscillator(ThreeDScene):
 
         # 02. Create the potential function graph V(x)
         potential_graph = prepare_potential_graph(origin)
-        self.play(Create(axes), Create(grid), Create(potential_graph))
-        #
-        # # 03.1 Define the wavefunction
-        # def wavefunction(_x, _t):
-        #     n = 0  # Ground state for now
-        #     # Hermite polynomial (using scipy for convenience)
-        #     from scipy.special import hermite
-        #     Hn = hermite(n)
-        #     norm = (1 / (np.pi**(1/4) *
-        #                  np.sqrt(2**n *
-        #                          np.math.factorial(n))))
-        #     psi = (norm *
-        #            Hn(_x) *
-        #            np.exp(-_x**2 / 2) *
-        #            np.exp(-1j * (n + 0.5) * _t))
-        #     return psi
-        #
-        # # 03.2 Calculate energy levels
-        # energy_levels = [0.5 + n for n in range(3)]  # First 3 energy levels
-        #
-        # # 03.3 Create energy level indicators
-        # energy_level_lines = [
-        #     Line(
-        #         start=np.array([-3, energy_level, 0]),
-        #         end=np.array([3, energy_level, 0]),
-        #         color=YELLOW
-        #     )
-        #     for energy_level in energy_levels
-        # ]
-        # # self.play(*[Create(line) for line in energy_level_lines])
+
+        # 03.2 Calculate energy levels
+        energy_level_lines = prepare_energy_levels(origin)
+        self.play(Create(axes), Create(grid), Create(potential_graph), *[Create(line) for line in energy_level_lines])
         #
         # # 04.1 Create the wavefunction visualization (shifted to the ground state energy level)
         # wavefunction_graph = ParametricFunction(
