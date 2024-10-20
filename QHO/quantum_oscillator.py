@@ -1,44 +1,28 @@
 import numpy as np
-from manim import ThreeDScene, Scene, Create, Transform
+from manim import ThreeDScene, Create, Transform
 from manim import FunctionGraph, ParametricFunction, Line, VGroup, NumberPlane
 from manim import ThreeDAxes, Axes, Dot
 from manim import WHITE, YELLOW, RED, GREEN, BLUE, GRAY
 from manim import UP, DOWN, DEGREES
 
-from scene_methods import prepare_grid, prepare_axes
+from scene_methods import prepare_grid, prepare_axes, prepare_camera, prepare_potential_graph
 
 class QuantumHarmonicOscillator(ThreeDScene):
     def construct(self):
 
-        # 00. Add XYZ axes
-        # tda = ThreeDAxes()
-        if True:
-            self.set_camera_orientation(
-                phi=30 * DEGREES,
-                gamma=0 * DEGREES,
-                theta=-60 * DEGREES
-            )
+        # 00. Configure the camera
+        prepare_camera(self)
 
         # 01. Add XYZ axes and a grid - aligned on the same point.
-        grid = prepare_grid()
         axes = prepare_axes()
-
         origin = axes.c2p(0, 0, 0)
-        grid.move_to(origin)
-        self.play(Create(axes), Create(grid))
+        grid = prepare_grid(origin)
+
         # origin_dot = Dot(origin, color=RED)
 
-        # # 02.1 Define the potential function V(x)
-        # def potential(x):
-        #     return 0.5 * x**2  # Dimensionless units
-        #
-        # # 02.2 Create the potential function graph
-        # potential_graph = FunctionGraph(
-        #     potential,
-        #     x_range=[-3, 3, 0.01],  # Adjust range as needed
-        #     color=GRAY
-        # ).rotate_about_origin(90 * DEGREES)
-        # # self.play(Create(potential_graph))
+        # 02. Create the potential function graph V(x)
+        potential_graph = prepare_potential_graph(origin)
+        self.play(Create(axes), Create(grid), Create(potential_graph))
         #
         # # 03.1 Define the wavefunction
         # def wavefunction(_x, _t):
